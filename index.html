@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de BTUs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        input[type="number"], select {
+            width: 60%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 150px; /* Ajuste conforme necessário */
+        }
+        #imagemAdicional {
+            display: none; /* Inicialmente escondida */
+            margin-top: 20px;
+        }
+        .field-container {
+            margin: 10px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <img src="logo.png" alt="Logo" class="logo">
+
+    <h1>Calculadora de BTUs</h1>
+
+    <div class="field-container">
+        <label for="largura">Largura do Ambiente (m):</label>
+        <input type="number" id="largura" min="0" required>
+    </div>
+
+    <div class="field-container">
+        <label for="altura">Altura do Ambiente (m):</label>
+        <input type="number" id="altura" min="0" required>
+    </div>
+
+    <div class="field-container">
+        <label for="comprimento">Comprimento do Ambiente (m):</label>
+        <input type="number" id="comprimento" min="0" required>
+    </div>
+
+    <div class="field-container">
+        <label for="pessoas">Número de Pessoas:</label>
+        <input type="number" id="pessoas" min="0" required>
+    </div>
+
+    <div class="field-container">
+        <label for="eletronicos">Número de Aparelhos Eletrônicos (computadores, televisores, etc.):</label>
+        <input type="number" id="eletronicos" min="0" required>
+    </div>
+
+    <div class="field-container">
+        <label for="exposicao">Exposição ao Sol:</label>
+        <select id="exposicao" required>
+            <option value="direta">Direta</option>
+            <option value="parcial">Parcial (luz indireta ou parte do dia)</option>
+            <option value="indireta">Indireta</option>
+        </select>
+    </div>
+
+    <button onclick="calcularBTUs()">Calcular BTUs</button>
+
+    <div id="resultado"></div>
+
+    <div id="botaoConsultar" style="display: none;">
+        <button onclick="window.location.href='https://beacons.ai/calcula_facil_btus_elgin'">Consultar Disponibilidade</button>
+    </div>
+
+    <img id="imagemAdicional" src="imagem-resultados.png" alt="Imagem de Resultados">
+
+    <script>
+        function calcularBTUs() {
+            var largura = parseFloat(document.getElementById('largura').value);
+            var altura = parseFloat(document.getElementById('altura').value);
+            var comprimento = parseFloat(document.getElementById('comprimento').value);
+            var pessoas = parseInt(document.getElementById('pessoas').value);
+            var eletronicos = parseInt(document.getElementById('eletronicos').value);
+            var exposicao = document.getElementById('exposicao').value;
+
+            var area = largura * altura * comprimento;
+            var btuBase = area * 600;
+
+            // Fatores adicionais
+            var btuPessoas = pessoas * 600;
+            var btuEletronicos = eletronicos * 500;
+            var btuExposicao = (exposicao === 'direta') ? 2000 : (exposicao === 'parcial' ? 1000 : 0);
+
+            var totalBTU = btuBase + btuPessoas + btuEletronicos + btuExposicao;
+
+            // Arredondamento
+            totalBTU = arredondarBTU(totalBTU);
+
+            // Exibir resultado
+            document.getElementById('resultado').innerHTML = "Potência recomendada: " + totalBTU + " BTUs";
+            document.getElementById('botaoConsultar').style.display = "block"; // Mostrar botão
+            document.getElementById('imagemAdicional').style.display = "block"; // Mostrar imagem
+        }
+
+        function arredondarBTU(valor) {
+            var arredondado = Math.round(valor / 6000) * 6000; // Arredonda para o mais próximo
+            var opcoes = [56000, 36000, 30000, 24000, 18000, 12000, 9000];
+
+            // Retornar o valor mais próximo das opções disponíveis
+            var maisProximo = opcoes.reduce((prev, curr) => Math.abs(curr - arredondado) < Math.abs(prev - arredondado) ? curr : prev);
+            return maisProximo;
+        }
+    </script>
+</body>
+</html>
